@@ -3,7 +3,7 @@
 CLIENTE=$1
 
 
-COLUNAS_DEFAULT='usuario,senha,URL,porta';
+COLUNAS_DEFAULT='usuario,senha,url,porta';
 COLUNA_COMANDO=${2:-''};
 COLUNAS_TOTAL=$COLUNAS_DEFAULT;
 if [ ! -z "$COLUNA_COMANDO" ]
