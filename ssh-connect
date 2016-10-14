@@ -1,0 +1,30 @@
+#!/bin/sh
+
+CLIENTE=$1
+
+
+COLUNAS_DEFAULT='usuario,senha,URL,porta';
+COLUNA_COMANDO=${2:-''};
+COLUNAS_TOTAL=$COLUNAS_DEFAULT;
+if [ ! -z "$COLUNA_COMANDO" ]
+then
+	COLUNAS_TOTAL="$COLUNAS_DEFAULT,$COLUNA_COMANDO";
+fi
+
+DATA=$(psql -A -t -q -c "select $COLUNAS_TOTAL from cliente WHERE cliente = '$CLIENTE';" -U MYUSER -d MYDATABASE)
+
+
+USUARIO=$(echo $DATA | awk -F'|' '{print $1}');
+SENHA=$(echo $DATA | awk -F'|' '{print $2}');
+URL=$(echo $DATA | awk -F'|' '{print $3}');
+PORTA_DATA=$(echo $DATA | awk -F'|' '{print $4}');
+PORTA=${PORTA_DATA:-22};
+COMANDO=$(echo $DATA | awk -F'|' '{print $5}');
+
+
+if [ ! -z "$COMANDO" ]
+then
+ echo $SENHA | sshpass -p $SENHA ssh $USUARIO@$URL "$COMANDO"
+else
+ sshpass -p $SENHA ssh $USUARIO@$URL
+fi
